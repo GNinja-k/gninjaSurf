@@ -21,12 +21,19 @@ WEBEXTLIBS = `pkg-config --libs webkit2gtk-4.1 webkit2gtk-web-extension-4.1 gio-
 INCS = $(X11INC) $(GTKINC)
 LIBS = $(X11LIB) $(GTKLIB) -lgthread-2.0
 
-# flags
+# flags from make.conf
+BASE_FLAGS = -march=znver1 -O3
+LTO_FLAGS = -flto
+GRAPHITE_FLAGS = -fgraphite-identity -floop-nest-optimize
+
+# compiler flags
 CPPFLAGS = -DVERSION=\"$(VERSION)\" -DGCR_API_SUBJECT_TO_CHANGE \
            -DLIBPREFIX=\"$(LIBPREFIX)\" -DWEBEXTDIR=\"$(LIBDIR)\" \
            -D_DEFAULT_SOURCE
-SURFCFLAGS = -fPIC $(INCS) $(CPPFLAGS)
-WEBEXTCFLAGS = -fPIC $(WEBEXTINC)
+SURFCFLAGS = $(BASE_FLAGS) $(LTO_FLAGS) $(GRAPHITE_FLAGS) $(INCS) $(CPPFLAGS)
+WEBEXTCFLAGS = $(BASE_FLAGS) $(LTO_FLAGS) $(GRAPHITE_FLAGS) $(WEBEXTINC)
+CXXFLAGS = $(BASE_FLAGS) $(LTO_FLAGS) $(GRAPHITE_FLAGS)
+LDFLAGS = $(LTO_FLAGS) -Wl,-O1 -Wl,--as-needed
 
 # compiler
-#CC = c99
+CC = gcc
